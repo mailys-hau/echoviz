@@ -1,4 +1,5 @@
 import numpy as np
+import plotly.graph_objects as go
 
 from skimage.measure import marching_cubes
 
@@ -48,6 +49,14 @@ class VoxelGrid:
         # Map to coordinates given by voxel grid. Need right multiplication
         verts = verts @ self.directions + self.origin
         return verts, faces, values
+
+    def make_mesh(self, level=None, mask=False, stride=1, **kwargs):
+        # Create Plotly 3D mesh
+        verts, faces, values = self.devoxelize(level, mask, stride)
+        x, y, z = zip(*verts)
+        i, j, k = zip(*faces)
+        intensity = None if "color" in kwargs else values
+        return go.Mesh3d(x=x, y=y, z=z, i=i, j=j, k=k, intensity=intensity, **kwargs)
 
     def float2bool(self, threshold=0.5, key=None):
         # Use for slice plotting

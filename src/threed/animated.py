@@ -9,13 +9,6 @@ from utils import BIN_CMAPS, HEAT_CMAPS
 
 
 
-def _make_plotly_mesh(voxels, level=None, mask=False, stride=1, **kwargs): #FIXME: Make this part of the VoxelGrid class
-    verts, faces, values = voxels.devoxelize(level, mask, stride)
-    x, y, z = zip(*verts)
-    i, j, k = zip(*faces)
-    intensity = None if "color" in kwargs else values
-    return go.Mesh3d(x=x, y=y, z=z, i=i, j=j, k=k, intensity=intensity, **kwargs)
-
 def _frame_args(duration):
     return {"frame": {"duration": duration, "redraw": True},
             "mode": "immediate",
@@ -28,18 +21,19 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
     frames = []
     #TODO: Multithread this
     for i in range(len(vinputs)):
-        data = [_make_plotly_mesh(vinputs[i], level=50, stride=6, opacity=0.3,
-                                  showscale=False, colorscale="ice", reversescale=True)]
+        data = [vinputs[i].make_mesh(level=50, stride=6, opacity=0.3,
+                                     showscale=False, colorscale="ice",
+                                     reversescale=True)]
         if vlabels:
             for k in vlabels.keys():
-                data.append(_make_plotly_mesh(vlabels[k][i], stride=2,
-                                              color=BIN_CMAPS[k][1]))
+                data.append(vlabels[k][i].make_mesh(stride=2, color=BIN_CMAPS[k][1]))
         if vpreds:
             for k in vpreds.keys():
                 if threshold:
-                    data.append(_make_plotly_mesh(vpreds[k][i].float2bool(threshold), stride=2, color=BIN_CMAPS[k][1]))
+                    data.append(vpreds[k][i].float2bool(threshold)
+                                            .make_mesh(stride=2, color=BIN_CMAPS[k][1]))
                 else:
-                    data.append(_make_plotly_mesh(vpreds[k][i], stride=2, colorscale=HEAT_CMAPS[k]))
+                    data.append(vpreds[k][i].make_mesh(stride=2, colorscale=HEAT_CMAPS[k]))
         frames.append(go.Frame(data=data, name=str(i)))
     layout = {"sliders": [{
                 "len": 0.8,
