@@ -18,8 +18,8 @@ def _rot_slice(voxel_grid, key):
     return np.rot90(voxel_grid.values[key])
 
 
-def plot_slice(vinput, vlabels, index, axis=1, mode="hmap", plot_input=True,
-               title='', show=True, filename=None, vpreds=None):
+def plot_slice(vinput, vlabels, index, axis=1, vpreds=None, threshold=None,
+               plot_input=True, title='', show=True, filename=None):
     # Expect vinput and vlabel to be VoxelGrid
     key = [slice(None), slice(None), slice(None)]
     key[axis] = index
@@ -36,12 +36,10 @@ def plot_slice(vinput, vlabels, index, axis=1, mode="hmap", plot_input=True,
         fig.add_trace(go.Heatmap(z=slabels[k], colorscale=BIN_CMAPS[k]),
                       col=max(nb_col - 1, 1), row=1)
     if vpreds:
-        if mode not in ["bmap", "hmap"]:
-            raise ValueError("Invalid plot mode. It can be `hmap` or `bmap`")
-        cmaps = BIN_CMAPS if mode == "bmap" else HEAT_CMAPS
+        cmaps = BIN_CMAPS if threshold else HEAT_CMAPS
         for k in vpreds.keys():
-            pred = np.rot90(vpreds[k].float2bool().values[key]) \
-                    if mode == "bmap" else _rot_slice(vpreds[k], key)
+            pred = np.rot90(vpreds[k].float2bool(threshold).values[key]) \
+                    if threshold else _rot_slice(vpreds[k], key)
             fig.add_trace(go.Heatmap(z=pred, colorscale=cmaps[k]),
                           col=nb_col, row=1)
     fig.update_layout(title=title, autosize=False, margin=dict(l=10, r=10, t=30, b=10),
@@ -54,3 +52,4 @@ def plot_slice(vinput, vlabels, index, axis=1, mode="hmap", plot_input=True,
     if filename:
         #FIXME: Make file lighter
         fig.write_image(filename, format=filename.suffix.strip('.'))
+    return fig

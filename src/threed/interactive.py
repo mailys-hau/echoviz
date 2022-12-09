@@ -13,7 +13,7 @@ from utils import BIN_CMAPS, HEAT_CMAPS
 
 
 
-def interactive_3d(vinput, vlabels=None, vpreds=None,  mode="hmap",
+def interactive_3d(vinput, vlabels=None, vpreds=None, threshold=None,
                    title="", show=True, filename=None):
     """
     """
@@ -36,13 +36,11 @@ def interactive_3d(vinput, vlabels=None, vpreds=None,  mode="hmap",
     if vpreds:
         pred_meshes = []
         for k in vpreds.keys():
-            if mode == "hmap":
-                pred_meshes.append(vpreds[k].make_mesh(stride=2, colorscale=HEAT_CMAPS[k]))
-            elif mode == "bmap":
-                pred_meshes.append(vpreds[k].float2bool()
+            if threshold:
+                pred_meshes.append(vpreds[k].float2bool(threshold)
                                             .make_mesh(stride=2, color=BIN_CMAPS[k][1]))
             else:
-                raise ValueError("Invalid plot mode. It can be `hmap` or `bmap`.")
+                pred_meshes.append(vpreds[k].make_mesh(stride=2, colorscale=HEAT_CMAPS[k]))
         fig.add_traces(pred_meshes)
     if show:
         iplot(fig)

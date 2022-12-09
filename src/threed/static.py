@@ -11,9 +11,9 @@ from threed.interactive import interactive_3d
 
 
 
-def static_3d(vinput, vlabels=None, vpreds=None, mode="hmap",
+def static_3d(vinput, vlabels=None, vpreds=None, threshold=None,
               title="", show=True, filename=None):
-    fig = interactive_3d(vinput, vlabels, vpreds, mode, title, show=False)
+    fig = interactive_3d(vinput, vlabels, vpreds, threshold, title, show=False)
     extension = filename.suffix.strip('.') if filename else "png"
     img_str = fig.to_image(format=extension)
     if show:
