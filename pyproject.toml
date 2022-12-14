@@ -1,0 +1,31 @@
+[build-system]
+    requires = ["setuptools >= 61.0"]
+    build-backend = "setuptools.build_meta"
+
+[project]
+    name = "echoviz-MALOU"
+    dynamic = ["version", "dependencies"]
+    authors = [{name="Maïlys Hau", email="27966914+mailys-hau@users.noreply.github.com"}]
+    description = "Visualisation of 3D mitral valve"
+    readme = "README.md"
+    keywords = ["visualisation", "plotly", "3D", "mitral valve"]
+    requires-python = ">=3.7"
+    classifiers = [
+        "Development Status :: 3 - Alpha",
+        "Framework :: Dash",
+        "Framework :: IPython",
+        "Framework :: Jupyter :: JupyterLab",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: Unix",
+        "Programming Language :: Python :: 3",
+        "Topic :: Scientific/Engineering :: Visualization",
+    ]
+
+[tool.setuptools.dynamic]
+    version = {attr = "echoviz.__version__"}
+
+[project.urls]
+    "Homepage" = "https://github.com/mailys-hau/echoviz"
+    "Bug Tracker" = "https://github.com/mailys-hau/echoviz/issues"
