@@ -34,7 +34,7 @@ def plot_slice(vinput, vlabels, index, axis=1, vpreds=None, threshold=None,
     # Groundtruth
     for k in slabels.keys():
         fig.add_trace(go.Heatmap(z=slabels[k], colorscale=BIN_CMAPS[k]),
-                      col=max(nb_col - 1, 1), row=1)
+                      col=min(nb_col, 2), row=1)
     if vpreds:
         cmaps = BIN_CMAPS if threshold else HEAT_CMAPS
         for k in vpreds.keys():
