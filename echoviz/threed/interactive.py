@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from plotly.offline import iplot
 from warnings import warn
 
-from utils import BIN_CMAPS, HEAT_CMAPS
+from echoviz.utils import BIN_CMAPS, HEAT_CMAPS
 
 
 

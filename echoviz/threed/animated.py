@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 
 from plotly.offline import iplot
 
-from utils import BIN_CMAPS, HEAT_CMAPS
+from echoviz.utils import BIN_CMAPS, HEAT_CMAPS
 
 #TODO: 3D "annimation", add slider for frames
 #TODO: gif making for sliced plot (3D would be hard to read)

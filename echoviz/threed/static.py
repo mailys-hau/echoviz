@@ -7,7 +7,7 @@ import plotly.express as px
 from io import BytesIO
 from PIL import Image
 
-from threed.interactive import interactive_3d
+from echoviz.threed.interactive import interactive_3d
 
 
 

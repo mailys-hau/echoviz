@@ -2,7 +2,7 @@ from io import BytesIO
 from plotly.offline import iplot
 from PIL import Image
 
-from twod.slicing import plot_slice
+from echoviz.twod.slicing import plot_slice
 
 
 
