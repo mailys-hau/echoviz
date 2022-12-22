@@ -11,7 +11,7 @@
     keywords = ["visualisation", "plotly", "3D", "mitral valve"]
     requires-python = ">=3.7"
     classifiers = [
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Framework :: Dash",
         "Framework :: IPython",
         "Framework :: Jupyter :: JupyterLab",
