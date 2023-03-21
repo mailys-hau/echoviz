@@ -21,19 +21,19 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
     frames = []
     #TODO: Multithread this
     for i in range(len(vinputs)):
-        data = [vinputs[i].make_mesh(level=50, stride=6, opacity=0.3,
+        data = [vinputs[i].make_mesh(opacity=0.3,
                                      showscale=False, colorscale="ice",
                                      reversescale=True)]
         if vlabels:
             for k in vlabels.keys():
-                data.append(vlabels[k][i].make_mesh(stride=2, color=BIN_CMAPS[k][1]))
+                data.append(vlabels[k][i].make_mesh(color=BIN_CMAPS[k][1]))
         if vpreds:
             for k in vpreds.keys():
                 if threshold:
                     data.append(vpreds[k][i].float2bool(threshold)
-                                            .make_mesh(stride=2, color=BIN_CMAPS[k][1]))
+                                            .make_mesh(color=BIN_CMAPS[k][1]))
                 else:
-                    data.append(vpreds[k][i].make_mesh(stride=2, colorscale=HEAT_CMAPS[k]))
+                    data.append(vpreds[k][i].make_mesh(colorscale=HEAT_CMAPS[k]))
         frames.append(go.Frame(data=data, name=str(i)))
     layout = {"sliders": [{
                 "len": 0.8,
