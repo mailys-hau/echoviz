@@ -24,7 +24,7 @@ class VoxelGrid:
         self.origin = origin
         self.directions = directions
         self.spacing = spacing
-        #FIXME: ALlow to add devoxelize parameters as attributes
+        #FIXME: Allow to add devoxelize parameters as attributes
 
     @classmethod
     def fromh5(cls, filename):
@@ -43,7 +43,7 @@ class VoxelGrid:
     def devoxelize(self, level=None, mask=False, stride=1):
         # Use for 3D plotting
         verts, faces, _, values = marching_cubes(self.values, level,
-                                                 spacing=1 / np.array(self.shape),
+                                                 spacing=tuple(self.spacing),
                                                  step_size=stride, allow_degenerate=False,
                                                  mask=self.values > 0 if mask else None)
         # Map to coordinates given by voxel grid. Need right multiplication
