@@ -5,4 +5,4 @@ from echoviz.utils import VoxelGrid
 
 
 __author__ = "Maïlys Hau"
-__version__ = "0.1.1"
+__version__ = "0.1.2"
