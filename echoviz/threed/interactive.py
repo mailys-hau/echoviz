@@ -31,12 +31,19 @@ def interactive_3d(vinput, vlabels=None, vpreds=None, threshold=None,
     if vlabels:
         lab_meshes = []
         for k in vlabels.keys():
-            lab_meshes.append(vlabels[k].make_mesh(color=BIN_CMAPS[k][1]))
+            if vlabels[k].values.sum() == 0:
+                warn(f"{k.capitalize()} label is null, not plotting it.",
+                     RuntimeWarning)
+            else:
+                lab_meshes.append(vlabels[k].make_mesh(color=BIN_CMAPS[k][1]))
         fig.add_traces(lab_meshes)
     if vpreds:
         pred_meshes = []
         for k in vpreds.keys():
-            if threshold:
+            if vpreds[k].values.sum() == 0:
+                warn(f"{k.capitalize()} prediction is null, not plotting it.",
+                     RuntimeWarning)
+            elif threshold:
                 pred_meshes.append(vpreds[k].float2bool(threshold)
                                             .make_mesh(color=BIN_CMAPS[k][1]))
             else:

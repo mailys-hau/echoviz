@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 
 from plotly.offline import iplot
+from warnings import warn
 
 from echoviz.utils import BIN_CMAPS, HEAT_CMAPS
 
@@ -26,10 +27,17 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
                                      reversescale=True)]
         if vlabels:
             for k in vlabels.keys():
-                data.append(vlabels[k][i].make_mesh(color=BIN_CMAPS[k][1]))
+                if vlabels[k][i].values.sum() == 0:
+                    warn(f"{k.capitalize()} label for frame {i} is null,"
+                         + " not plotting it.", RuntimeWarning)
+                else:
+                    data.append(vlabels[k][i].make_mesh(color=BIN_CMAPS[k][1]))
         if vpreds:
             for k in vpreds.keys():
-                if threshold:
+                if vpreds[k][i].values.sum() == 0:
+                    warn(f"{k.capitalize()} prediction for frame {i} is null,"
+                         + " not plotting it.", RuntimeWarning)
+                elif threshold:
                     data.append(vpreds[k][i].float2bool(threshold)
                                             .make_mesh(color=BIN_CMAPS[k][1]))
                 else:
