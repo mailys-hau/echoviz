@@ -34,44 +34,58 @@ def _show_res(dtype, path):
 
 def testy_testa():
     # Files to plot
-    pinput = Path("~/Documents/data/GE_subset/20150624151535_FMR.h5").expanduser()
-    ppred = Path("~/Documents/outputs/3dmv-segmentation/equi-loss/20150624151535_FMR.h5").expanduser()
+    proot = Path("~/Documents/outputs/test-predictions")
+    pinput = Path("~/Documents/data/hdf-isotropic/ref.h5").expanduser()
+    pbpred = proot.joinpath("bin.h5").expanduser()
+    pmpred = proot.joinpath("multi.h5").expanduser()
 
-    ih5, ph5 = h5py.File(pinput, 'r'), h5py.File(ppred, 'r')
     # Additional info for voxel grid
-    spacing = ih5["ImageGeometry"]["voxelsize"][()]
-    origin = ih5["ImageGeometry"]["origin"][()]
-    directions = ih5["ImageGeometry"]["directions"][()]
-    fnb = ih5["ImageGeometry"]["frameNumber"][()]
+    ih5 = h5py.File(pinput, 'r')
+    spacing = ih5["VolumeGeometry"]["resolution"][()]
+    origin = ih5["VolumeGeometry"]["origin"][()]
+    directions = ih5["VolumeGeometry"]["directions"][()]
+    fnb = ih5["VolumeGeometry"]["frameNumber"][()]
+    ih5.close()
+    pbh5, pmh5 = h5py.File(pbpred, 'r'), h5py.File(pmpred, 'r')
     inputs = []
-    anteriors, posteriors = [], [] # Annotations
-    predictions = []
+    anteriors, posteriors, targets = [], [], [] # Annotations
+    pralls, prants, prposts = [], [], []
     # Load frames in each category (input, labels, prediction)
     for i in range(1, fnb):
-        h5vol = ih5["CartesianVolumes"][f"vol{i:02d}"][()]
+        # Input is identical in both files
+        h5vol = pbh5["Input"][f"vol{i:02d}"][()]
         inputs.append(VoxelGrid(h5vol, origin, directions, spacing))
-        ant = ih5["Labels"][f"ant{i:02d}"][()]
+        # Binary segmentation target
+        tg = pbh5["Target"][f"vol{i:02d}"][()]
+        targets.append(VoxelGrid(tg, origin, directions, spacing))
+        # Multi segmantation target
+        ant = pmh5["Target"][f"anterior-{i:02d}"][()]
         anteriors.append(VoxelGrid(ant, origin, directions, spacing))
-        post = ih5["Labels"][f"post{i:02d}"][()]
+        post = pmh5["Target"][f"posterior-{i:02d}"][()]
         posteriors.append(VoxelGrid(post, origin, directions, spacing))
-        pred = ph5["Predictions"][f"vol{i:02d}"][()]
-        predictions.append(VoxelGrid(pred, origin, directions, spacing))
-    ih5.close(), ph5.close()
+        # Predictions
+        pra = pbh5["Prediction"][f"vol{i:02d}"][()]
+        pralls.append(VoxelGrid(pra, origin, directions, spacing))
+        prant = pmh5["Prediction"][f"anterior-{i:02d}"][()]
+        prpost = pmh5["Prediction"][f"posterior-{i:02d}"][()]
+        prants.append(VoxelGrid(prant, origin, directions, spacing))
+        prposts.append(VoxelGrid(prpost, origin, directions, spacing))
+    pbh5.close(), pmh5.close()
     # Try the plotting
     print("Here's some 2D static plots.")
     _time_plot(plot_slice, inputs[0],
                {"anterior": anteriors[0], "posterior": posteriors[0]},
                120, axis=1, plot_input=False, title="Labels on input")
-    _time_plot(plot_slice, inputs[0],
-               {"anterior": anteriors[0], "posterior": posteriors[0]},
-               120, axis=2, vpreds={"all": predictions[0]}, threshold=0.5,
+    _time_plot(plot_slice, inputs[0], {"all": targets[0]},
+               120, axis=2, vpreds={"all": pralls[0]}, threshold=0.5,
                filename=POUTS["png"], title="Labels on input & predictions")
     _show_res("image", POUTS["png"])
     print("Now for some 3D static plots.")
     _time_plot(static_3d, inputs[-1],
                {"anterior": anteriors[-1], "posterior": posteriors[-1]},
-               vpreds={"all": predictions[-1]}, threshold=0.5,
-               filename=POUTS["png"], title="Input, labels & predictions")
+               vpreds={"anterior": prants[-1], "posterior": prposts[-1]},
+               threshold=0.5, filename=POUTS["png"],
+               title="Input, labels & predictions")
     _show_res("image", POUTS["png"])
     print("Let's make it fancy and have an interactive 3D plot")
     _time_plot(interactive_3d, inputs[-1],
@@ -81,15 +95,15 @@ def testy_testa():
     print("Back to 2D! But with a twist... It's animated o/")
     _time_plot(sliced_sequence, inputs,
                {"anterior": anteriors, "posterior": posteriors},
-               120, filename=POUTS["gif"], title="Input & labels")
+               60, axis=0, filename=POUTS["gif"], title="Input & labels")
     _show_res("gif", POUTS["gif"])
-    _time_plot(sliced_volume, inputs[-2],
-               {"anterior": anteriors[-2], "posterior": posteriors[-2]},
-               axis=2, vpreds={"all": predictions[-2]}, plot_input=False,
+    _time_plot(sliced_volume, inputs[-2], {"all": targets[-2]},
+               axis=2, vpreds={"all": pralls[-2]}, plot_input=False,
                filename=POUTS["gif"], title="Labels on input & predictions")
     _show_res("gif", POUTS["gif"])
     print("And for the grand finale... Interactive 3D animated plot!!")
-    _time_plot(animated_3d, inputs, None, vpreds={"all": predictions},
+    _time_plot(animated_3d, inputs, None,
+               vpreds={"anterior": prants, "posterior": prposts},
                filename=POUTS["html"], title="Input & predictions", show=False)
     _show_res("web file", POUTS["html"])
     sleep(3) # Wait so last file can be seen before being removed
