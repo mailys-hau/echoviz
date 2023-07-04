@@ -22,12 +22,11 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
     frames = []
     #TODO: Multithread this
     for i in range(len(vinputs)):
-        data = [vinputs[i].make_mesh(opacity=0.3,
-                                     showscale=False, colorscale="ice",
-                                     reversescale=True)]
+        data = [vinputs[i].make_mesh(opacity=0.3, showscale=False, colorscale="Greys")]
         if vlabels:
             for k in vlabels.keys():
                 if vlabels[k][i].values.sum() == 0:
+                    #FIXME: Still raise some RuntimeError
                     warn(f"{k.capitalize()} label for frame {i} is null,"
                          + " not plotting it.", RuntimeWarning)
                 else:
