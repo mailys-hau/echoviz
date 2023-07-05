@@ -22,7 +22,7 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
     frames = []
     #TODO: Multithread this
     for i in range(len(vinputs)):
-        data = [vinputs[i].make_mesh(opacity=0.3, showscale=False, colorscale="Greys")]
+        data = [vinputs[i].make_mesh(opacity=0.3, showscale=False, colorscale="Greys", cmin=0, cmax=1)]
         if vlabels:
             for k in vlabels.keys():
                 if vlabels[k][i].values.sum() == 0:
@@ -40,7 +40,7 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
                     data.append(vpreds[k][i].float2bool(threshold)
                                             .make_mesh(color=BIN_CMAPS[k][1]))
                 else:
-                    data.append(vpreds[k][i].make_mesh(colorscale=HEAT_CMAPS[k]))
+                    data.append(vpreds[k][i].make_mesh(colorscale=HEAT_CMAPS[k], cmin=0, cmax=1))
         frames.append(go.Frame(data=data, name=str(i)))
     layout = {"sliders": [{
                 "len": 0.8,
@@ -70,6 +70,7 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
     fig.update_layout(scene_camera=camera, title=title, title_y=0.98,
                       plot_bgcolor="rgb(64,64,64)", autosize=False, width=600,
                       height=500, margin=dict(l=10, t=30, b=10))
+    fig.update_traces(showscale=False)
     if show:
         iplot(fig)
     if filename:

@@ -22,7 +22,7 @@ def interactive_3d(vinput, vlabels=None, vpreds=None, threshold=None,
         warn("Plotting label and annotation in 3D make for a busy plot", UserWarning)
     camera = {"eye": {'x': -0.5, 'y': -1.15, 'z': 0.7},
               "up": {'x': 0, 'y': 0, 'z': 0.5}}
-    inp_mesh = vinput.make_mesh(showscale=False, opacity=0.3, colorscale="Greys")
+    inp_mesh = vinput.make_mesh(showscale=False, opacity=0.3, colorscale="Greys", cmin=0, cmax=1)
     fig = go.Figure(data=inp_mesh)
     fig.update_layout(scene_camera=camera, title=title, title_y=0.98,
                       plot_bgcolor="rgb(64, 64, 64)",
@@ -46,8 +46,9 @@ def interactive_3d(vinput, vlabels=None, vpreds=None, threshold=None,
                 pred_meshes.append(vpreds[k].float2bool(threshold)
                                             .make_mesh(color=BIN_CMAPS[k][1]))
             else:
-                pred_meshes.append(vpreds[k].make_mesh(colorscale=HEAT_CMAPS[k]))
+                pred_meshes.append(vpreds[k].make_mesh(colorscale=HEAT_CMAPS[k], cmin=0, cmax=1))
         fig.add_traces(pred_meshes)
+        fig.update_traces(showscale=False)
     if show:
         iplot(fig)
     if filename:
