@@ -30,17 +30,17 @@ def plot_slice(vinput, vlabels, index, axis=1, vpreds=None, threshold=None,
     nb_col = (2 if vpreds else 1) + plot_input
     fig = make_subplots(cols=nb_col, horizontal_spacing=0.01)
     for c in range(nb_col):
-        fig.add_trace(go.Heatmap(z=sinput, colorscale="Greys_r"), col=c+1, row=1)
+        fig.add_trace(go.Heatmap(z=sinput, colorscale="gray", zmin=0, zmax=1), col=c+1, row=1)
     # Groundtruth
     for k in slabels.keys():
-        fig.add_trace(go.Heatmap(z=slabels[k], colorscale=BIN_CMAPS[k]),
+        fig.add_trace(go.Heatmap(z=slabels[k], colorscale=BIN_CMAPS[k], zmin=0, zmax=1),
                       col=min(nb_col, 2), row=1)
     if vpreds:
         cmaps = BIN_CMAPS if threshold else HEAT_CMAPS
         for k in vpreds.keys():
             pred = np.rot90(vpreds[k].float2bool(threshold).values[key]) \
                     if threshold else _rot_slice(vpreds[k], key)
-            fig.add_trace(go.Heatmap(z=pred, colorscale=cmaps[k]),
+            fig.add_trace(go.Heatmap(z=pred, colorscale=cmaps[k], zmin=0, zmax=1),
                           col=nb_col, row=1)
     fig.update_layout(title=title, autosize=False, margin=dict(l=10, r=10, t=30, b=10),
                       width=nb_col*350, height=350, title_y=0.98)
