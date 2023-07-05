@@ -30,7 +30,7 @@ def plot_slice(vinput, vlabels, index, axis=1, vpreds=None, threshold=None,
     nb_col = (2 if vpreds else 1) + plot_input
     fig = make_subplots(cols=nb_col, horizontal_spacing=0.01)
     for c in range(nb_col):
-        fig.add_trace(go.Heatmap(z=sinput, colorscale="gray", zmin=0, zmax=1), col=c+1, row=1)
+        fig.add_trace(go.Heatmap(z=sinput, colorscale="Greys_r", zmin=0, zmax=1), col=c+1, row=1)
     # Groundtruth
     for k in slabels.keys():
         fig.add_trace(go.Heatmap(z=slabels[k], colorscale=BIN_CMAPS[k], zmin=0, zmax=1),
