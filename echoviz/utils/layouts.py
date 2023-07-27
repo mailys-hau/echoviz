@@ -20,6 +20,9 @@ LAYOUT_3D = {"scene_camera": CAMERA,
              }
 
 
+CONTOUR = {"color": "lightgrey", "show": True, "width": 10}
+
+
 def frame_args(duration):
     return {"frame": {"duration": duration, "redraw": True},
             "mode": "immediate",

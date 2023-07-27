@@ -33,8 +33,7 @@ def _dist_interactive_3d(vlabels, vpreds, fdist, vinputs=None,
         sdf_res = fdist(sdf(verts))
         cmin, cmax = min(min(sdf_res), cmin), max(max(sdf_res), cmax)
         mesh = vpreds[k].make_mesh(verts=verts, faces=faces, values=sdf_res, name=k,
-                                   opacity=0.7, cmin=cmin, cmax=cmax, colorscale=colorscale,
-                                   contour={"color": "lightgrey", "show": True, "width": 10})
+                                   opacity=0.7, colorscale=colorscale, contour=CONTOUR)
         fig.add_trace(mesh)
     # Homogenize SDF colorscale
     fig.update_traces({"cmin": cmin, "cmax": cmax}, lambda t: t.name != "input")
