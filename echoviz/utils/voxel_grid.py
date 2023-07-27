@@ -5,10 +5,15 @@ from skimage.measure import marching_cubes
 
 
 
+
+_UNITS = {"m2mm": 1e3, "mm2m": 1e-3}
+
+
+
 class VoxelGrid:
     # Code originating from Sverre Herland
     """ Wrapper for voxel grid and its relevant information for plotting """
-    def __init__(self, grid, origin, directions, spacing):
+    def __init__(self, grid, origin, directions, spacing, unit='m'):
         """
         grid:
         """
@@ -24,8 +29,7 @@ class VoxelGrid:
         self.origin = origin
         self.directions = directions
         self.spacing = spacing
-        #FIXME: Allow to add devoxelize parameters as attributes
-        #TODO: Allow to change spacing unit
+        self.unit = unit
 
     @classmethod
     def fromh5(cls, filename):
@@ -40,6 +44,11 @@ class VoxelGrid:
     @property
     def shape(self):
         return self.values.shape
+
+    def set_scale(self, new_unit):
+        converter = _UNITS[f"{self.unit}2{new_unit}"]
+        self.spacing *= converter
+        self.unit = new_unit
 
     def devoxelize(self, level=None, mask=False, stride=1):
         # Use for 3D plotting
