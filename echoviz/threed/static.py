@@ -8,13 +8,14 @@ from io import BytesIO
 from PIL import Image
 
 from echoviz.threed.interactive import interactive_3d
+from echoviz.utils.misc import clean_fname
 
 
 
 def static_3d(vinput, vlabels=None, vpreds=None, threshold=None,
               title="", show=True, filename=None):
     fig = interactive_3d(vinput, vlabels, vpreds, threshold, title, show=False)
-    extension = filename.suffix.strip('.') if filename else "png"
+    extension = str(filename).split('.')[-1] if filename else "png"
     img_str = fig.to_image(format=extension)
     if show:
         img = Image.open(BytesIO(img_str))
@@ -25,5 +26,6 @@ def static_3d(vinput, vlabels=None, vpreds=None, threshold=None,
         fig.update_yaxes(showticklabels=False)
         fig.show()
     if filename:
+        filename = clean_fname(filename, f".{extension}")
         with open(filename, "wb") as fd:
             fd.write(img_str)

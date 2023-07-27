@@ -51,6 +51,8 @@ class VoxelGrid:
         self.unit = new_unit
 
     def devoxelize(self, level=None, mask=False, stride=1):
+        if not self.values.any():
+            raise RuntimeError("VoxelGrid contain only zero, `marching_cubes` will fail.")
         # Use for 3D plotting
         verts, faces, _, values = marching_cubes(self.values, level,
                                                  spacing=tuple(self.spacing),

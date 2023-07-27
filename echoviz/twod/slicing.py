@@ -11,6 +11,8 @@ from plotly.offline import iplot
 from plotly.subplots import make_subplots
 
 from echoviz.utils import BIN_CMAPS, HEAT_CMAPS
+from echoviz.utils.layouts import LAYOUT_2D
+from echoviz.utils.misc import clean_fname
 
 
 
@@ -42,14 +44,12 @@ def plot_slice(vinput, vlabels, index, axis=1, vpreds=None, threshold=None,
                     if threshold else _rot_slice(vpreds[k], key)
             fig.add_trace(go.Heatmap(z=pred, colorscale=cmaps[k], zmin=0, zmax=1),
                           col=nb_col, row=1)
-    fig.update_layout(title=title, autosize=False, margin=dict(l=10, r=10, t=30, b=10),
-                      width=nb_col*350, height=350, title_y=0.98)
-    fig.update_xaxes(showgrid=False, showticklabels=False)
-    fig.update_yaxes(showgrid=False, showticklabels=False)
+    fig.update_layout(title=title, width=nb_col*350, **LAYOUT_2D)
     fig.update_traces(showscale=False)
     if show:
         iplot(fig)
     if filename:
+        filename = clean_fname(filename, ".png")
         #FIXME: Make file lighter
         fig.write_image(filename, format=filename.suffix.strip('.'))
     return fig
