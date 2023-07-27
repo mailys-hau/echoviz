@@ -25,6 +25,7 @@ class VoxelGrid:
         self.directions = directions
         self.spacing = spacing
         #FIXME: Allow to add devoxelize parameters as attributes
+        #TODO: Allow to change spacing unit
 
     @classmethod
     def fromh5(cls, filename):
@@ -50,9 +51,11 @@ class VoxelGrid:
         verts = verts @ self.directions + self.origin
         return verts, faces, values
 
-    def make_mesh(self, level=None, mask=False, stride=1, **kwargs):
-        # Create Plotly 3D mesh
-        verts, faces, values = self.devoxelize(level, mask, stride)
+    def make_mesh(self, level=None, mask=False, stride=1,
+                  # `marching_cubes` was computed somewhere else
+                  verts=None, faces=None, values=None, **kwargs):
+        if verts is None or faces is None:
+            verts, faces, values = self.devoxelize(level, mask, stride)
         x, y, z = zip(*verts)
         i, j, k = zip(*faces)
         intensity = None if "color" in kwargs else values
@@ -60,7 +63,6 @@ class VoxelGrid:
 
     def float2bool(self, threshold=0.5, key=None):
         # Use for slice plotting
-        #FIXME: Handle multiclass
         mask = (self.values[key] if key else self.values) > threshold
         return VoxelGrid(np.where(mask, 1, 0).astype(np.uint8), self.origin,
                          self.directions, self.spacing)
