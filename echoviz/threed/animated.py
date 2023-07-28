@@ -1,9 +1,10 @@
 import plotly.graph_objects as go
 
 from plotly.offline import iplot
+from pysdf import SDF
 from warnings import warn
 
-from echoviz.utils import BIN_CMAPS, HEAT_CMAPS
+from echoviz.utils.colors import BIN_CMAPS, HEAT_CMAPS, SJET, SJET_R
 from echoviz.utils.layouts import LAYOUT_3D, LAYOUT_4D, CONTOUR, frame_args
 from echoviz.utils.misc import clean_fname
 
@@ -33,12 +34,11 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
                     warn(f"{k.capitalize()} prediction for frame {i} is null, not plotting it.", RuntimeWarning)
         frames.append(go.Frame(data=data, name=str(i)))
     layout = LAYOUT_4D
-    layout["sliders"]["steps"] = [{
-        "steps": [{
+    layout["sliders"][0]["steps"] = [{
         "args": [[str(i)], frame_args(0)],
         "label": str(i),
         "method": "animate",
-        } for i in range(len(frames)) ]}],
+        } for i in range(len(frames)) ]
     #FIXME: fix range to smooth animation
     fig = go.Figure(data=frames[0].data, frames=frames, layout=layout)
                     #range_x=[], range_y=[], range_z=[])
@@ -57,37 +57,38 @@ def _dist_4d(vlabels, vpreds, fdist, vinputs=None,
              title='', colorscale=SJET_R, show=True, filename=None):
     frames = []
     cmin, cmax = 10000, -10000
+    nbf = len(list(vlabels.values())[0])
     #TODO: Multithread this
-    for i in range(len(vlabels)):
+    for i in range(nbf):
         data = []
-        if vinputs
+        if vinputs:
             data.append(vinputs[i].make_mesh(opacity=0.3, showscale=False, colorscale="Greys", cmin=0, cmax=1))
         for k in vlabels.keys():
             try:
-                verts, faces, _ = vlabels[k].devoxelize()
+                verts, faces, _ = vlabels[k][i].devoxelize()
             except RuntimeError:
-                warn(f"{k.capitalize()}} label for frame {i} is null, not plotting it.", RuntimeWarning)
+                warn(f"{k.capitalize()} label for frame {i} is null, not plotting it.", RuntimeWarning)
             sdf = SDF(verts, faces)
             try:
-                verts, faces, _ = vlabels[k].devoxelize()
+                verts, faces, _ = vpreds[k][i].devoxelize()
             except RuntimeError:
                 warn(f"{k.capitalize()} prediction for frame {i} is null, not plotting it.", RuntimeWarning)
             sdf_res = fdist(sdf(verts))
-            data.append(vpreds[k].make_mesh(verts=verts, faces=faces, values=sdf_res, name=k,
-                                            opacity=0.7, colorscale=colorscale, contour=CONTOUR))
+            cmin, cmax = min(min(sdf_res), cmin), max(max(sdf_res), cmax)
+            data.append(vpreds[k][i].make_mesh(verts=verts, faces=faces, values=sdf_res, name=k,
+                                               opacity=0.7, colorscale=colorscale, contour=CONTOUR))
         frames.append(go.Frame(data=data, name=str(i)))
     layout = LAYOUT_4D
-    layout["sliders"]["steps"] = [{
-        "steps": [{
+    layout["sliders"][0]["steps"] = [{
         "args": [[str(i)], frame_args(0)],
         "label": str(i),
         "method": "animate",
-        } for i in range(len(frames)) ]}],
+        } for i in range(len(frames)) ]
     #FIXME: fix range to smooth animation
     fig = go.Figure(data=frames[0].data, frames=frames, layout=layout)
                     #range_x=[], range_y=[], range_z=[])
     fig.update_layout(title=title, **LAYOUT_3D)
-    fig.update_traces({"cmin": cmin, "cmax": cmax, "showscale": False}, lambda t: t.name != "input")
+    fig.update_traces({"cmin": cmin, "cmax": cmax, "showscale": True}, lambda t: t.name != "input")
     if show:
         iplot(fig)
     if filename:
@@ -103,4 +104,3 @@ def sdf_animated_3d(vlabels, vpreds, vinputs=None, title='', show=True, filename
 def asd_animated_3d(vlabels, vpreds, vinputs=None, title='', show=True, filename=None):
     return _dist_4d(vlabels, vpreds, lambda x: abs(x), vinputs=vinputs, title=title,
                     colorscale=SJET_R, show=show, filename=filename)
->>>>>>> fa53442 (fixup! misc: code refracting)
