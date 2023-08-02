@@ -13,6 +13,6 @@ setup(name="echoviz",
       url="https://github.com/mailys-hau/echoviz",
       author="Maïlys HAU",
       packages=["echoviz", "echoviz.threed", "echoviz.twod", "echoviz.utils"],
-      install_requires=["kaleido", "numpy", "pandas", "pillow", "plotly",
-                        "scikit-image"],
+      install_requires=["kaleido", "numpy", "pandas", "pillow", "plotly", "pysdf",
+                        "scikit-image", "ipython"],
      )
