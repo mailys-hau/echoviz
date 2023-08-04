@@ -1,10 +1,10 @@
 LAYOUT_2D = {"title_y": 0.98,
              "autosize": False,
              "height": 350,
-             "margin": {'l': 10, 'r': 10, 't': 30, 'b': 10},
-             "xaxis": {"showgrid": False, "showticklabels": False},
-             "yaxis": {"showgrid": False, "showticklabels": False}
+             "margin": {'l': 10, 'r': 10, 't': 30, 'b': 10}
              }
+
+NAKED_AXIS = {"showgrid": False, "showticklabels": False}
 
 
 CAMERA = {"eye": {'x': -0.5, 'y': -1.15, 'z': 0.7},
