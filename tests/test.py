@@ -40,6 +40,9 @@ def testy_testa(fname):
     # SDF (m)
     time_plot(ecv.sdf_static_3d, bvtg, bvpr, vinputs=bvinp, title="SDF (m)")
     # ASD (m)
+    bvinp.set_scale('m')
+    for k in bvtg.keys():
+        bvtg[k].set_scale('m'), bvpr[k].set_scale('m')
     time_plot(ecv.asd_static_3d,bvtg, bvpr, show=False, filename=POUTS["png"], title="ASD (m)")
     show_res("image", POUTS["png"])
     print("Let's take it up a notch and have an interactive 3D plot!")

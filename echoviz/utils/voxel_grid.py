@@ -46,6 +46,8 @@ class VoxelGrid:
         return self.values.shape
 
     def set_scale(self, new_unit):
+        if new_unit == self.unit:
+            return
         converter = _UNITS[f"{self.unit}2{new_unit}"]
         self.spacing *= converter
         self.unit = new_unit
