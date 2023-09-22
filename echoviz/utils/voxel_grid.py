@@ -25,10 +25,10 @@ class VoxelGrid:
         assert origin.shape == (3,)
         assert directions.shape == (3, 3)
         assert spacing.shape == (3,)
-        self.values = grid
-        self.origin = origin
-        self.directions = directions
-        self.spacing = spacing
+        self.values = grid.copy()
+        self.origin = origin.copy()
+        self.directions = directions.copy()
+        self.spacing = spacing.copy()
         self.unit = unit
 
     @classmethod

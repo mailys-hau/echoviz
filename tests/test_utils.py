@@ -39,7 +39,7 @@ def the_end(msg):
 
 def _get_grid(array, origin, directions, spacing):
     # You want to copy in case you change the scale because it's the same for several grids
-    return VoxelGrid(array, origin.copy(), directions.copy(), spacing.copy())
+    return VoxelGrid(array, origin, directions, spacing)
 
 def load_file(fname):
     hdf = h5py.File(fname, 'r')
