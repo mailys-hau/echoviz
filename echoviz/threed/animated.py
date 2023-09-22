@@ -4,7 +4,7 @@ from plotly.offline import iplot
 from pysdf import SDF
 from warnings import warn
 
-from echoviz.utils.colors import BIN_CMAPS, HEAT_CMAPS, SJET, SJET_R
+from echoviz.utils.colors import BIN_CMAPS, HEAT_CMAPS
 from echoviz.utils.layouts import LAYOUT_3D, LAYOUT_4D, CONTOUR, frame_args
 from echoviz.utils.misc import clean_fname
 
@@ -54,7 +54,7 @@ def animated_3d(vinputs, vlabels=None, vpreds=None, threshold=None,
 
 
 def _dist_4d(vlabels, vpreds, fdist, vinputs=None,
-             title='', colorscale=SJET_R, show=True, filename=None):
+             title='', colorscale="delta", show=True, filename=None):
     frames = []
     cmin, cmax = 10000, -10000
     nbf = len(list(vlabels.values())[0])
@@ -88,7 +88,10 @@ def _dist_4d(vlabels, vpreds, fdist, vinputs=None,
     fig = go.Figure(data=frames[0].data, frames=frames, layout=layout)
                     #range_x=[], range_y=[], range_z=[])
     fig.update_layout(title=title, **LAYOUT_3D)
-    fig.update_traces({"cmin": cmin, "cmax": cmax, "showscale": True}, lambda t: t.name != "input")
+    traces = {"cmin": cmin, "cmax": cmax, "showscale": True}
+    if cmin < 0 and cmax > 0:
+        traces["cmid"] = 0
+    fig.update_traces(traces, lambda t: t.name != "input")
     if show:
         iplot(fig)
     if filename:
@@ -103,4 +106,4 @@ def sdf_animated_3d(vlabels, vpreds, vinputs=None, title='', show=True, filename
 
 def asd_animated_3d(vlabels, vpreds, vinputs=None, title='', show=True, filename=None):
     return _dist_4d(vlabels, vpreds, lambda x: abs(x), vinputs=vinputs, title=title,
-                    colorscale=SJET_R, show=show, filename=filename)
+                    colorscale="viridis_r", show=show, filename=filename)

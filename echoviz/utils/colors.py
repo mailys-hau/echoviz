@@ -20,7 +20,3 @@ BIN_CMAPS = {"anterior": rgb2rgba(["rgb(145,53,125)"] * 2, 0),
 HEAT_CMAPS = {"anterior": rgb2rgba(pxc.sequential.Magenta),
               "posterior": rgb2rgba(pxc.sequential.Blues),
               "all": rgb2rgba(pxc.sequential.YlOrBr)}
-
-# Jet colorscale, with more greens and no dark red
-SJET = pxc.sequential.Rainbow[1:]
-SJET_R = SJET[-1::-1]

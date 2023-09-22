@@ -4,14 +4,13 @@ from plotly.offline import iplot
 from pysdf import SDF
 from warnings import warn
 
-from echoviz.utils.colors import SJET, SJET_R
 from echoviz.utils.layouts import LAYOUT_3D, CONTOUR
 from echoviz.utils.misc import clean_fname
 
 
 
 def _dist_interactive_3d(vlabels, vpreds, fdist, vinputs=None,
-                         title='', colorscale=SJET_R, show=True, filename=None):
+                         title='', colorscale="delta", show=True, filename=None):
     """
     """
     # Create fancy figure
@@ -36,7 +35,10 @@ def _dist_interactive_3d(vlabels, vpreds, fdist, vinputs=None,
                                    opacity=0.7, colorscale=colorscale, contour=CONTOUR)
         fig.add_trace(mesh)
     # Homogenize SDF colorscale
-    fig.update_traces({"cmin": cmin, "cmax": cmax}, lambda t: t.name != "input")
+    traces = {"cmin": cmin, "cmax": cmax}
+    if cmin < 0 and cmax > 0:
+        traces["cmid"] = 0
+    fig.update_traces(traces, lambda t: t.name != "input")
     if show:
         iplot(fig)
     if filename:
@@ -52,4 +54,4 @@ def sdf_interactive_3d(vlabels, vpreds, vinputs=None, title='', show=True, filen
 
 def asd_interactive_3d(vlabels, vpreds, vinputs=None, title='', show=True, filename=None):
     return _dist_interactive_3d(vlabels, vpreds, lambda x: abs(x), vinputs=vinputs,
-                                title=title, colorscale=SJET, show=show, filename=filename)
+                                title=title, colorscale="viridis_r", show=show, filename=filename)
